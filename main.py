@@ -7,13 +7,30 @@ See assignment-01.pdf for details.
 def foo(x):
     ### TODO
     pass
+    if x==0:
+        return 0
+    elif x==1:
+        return 1
+    else:
+        return foo(x-1) + foo(x-2)
 
 def longest_run(mylist, key):
     ### TODO
     pass
 
+    this_run = 0
+    max_run = 0
+    for item in mylist:
+        if item == key:
+            this_run += 1
+            max_run = max(max_run, this_run)
+        else:
+            this_run = 0  
+    
+    return max_run
+            
 
-class Result:
+class Result:  #package, 
     """ done """
     def __init__(self, left_size, right_size, longest_size, is_entire_range):
         self.left_size = left_size               # run on left side of input
@@ -40,5 +57,30 @@ def longest_run_recursive(mylist, key):
     ### TODO
     pass
 
+    n = len(mylist)
+    if n == 0:
+        return Result(0, 0, 0, True)
+    if n == 1:
+        if mylist[0] == key:
+            return Result(1, 1, 1, True)
+        else:
+            return Result(0, 0, 0, False)
+
+    
+    
+    left_result  = longest_run_recursive(mylist[:len(mylist)//2], key)
+    right_result = longest_run_recursive(mylist[len(mylist)//2:], key)
+
+    
+    is_entire = left_result.is_entire_range and right_result.is_entire_range
+
+    
+    left_size = left_result.left_size if not left_result.is_entire_range else (left_result.left_size + right_result.left_size)
 
 
+    right_size = right_result.right_size if not right_result.is_entire_range else (right_result.right_size + left_result.right_size)
+
+    
+    longest_size = max(left_result.longest_size, right_result.longest_size, left_result.right_size + right_result.left_size)
+
+    return Result(left_size, right_size, longest_size, is_entire)
